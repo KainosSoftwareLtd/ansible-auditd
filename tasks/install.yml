@@ -1,0 +1,6 @@
+---
+- name: Install packages
+  yum:
+    name: '{{ item.name }}'
+    state: '{{ item.state }}'
+  with_items: '{{ auditd_packages }}'

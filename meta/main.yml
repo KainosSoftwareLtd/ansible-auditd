@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: Caoimhin Graham
+  description: A role that installs and configures auditd. 
+  license: MIT
+  min_ansible_version: 2.1
+  platforms:
+  - name: EL
+    versions:
+    - 7
+  categories:
+  - system
+  - security
+

@@ -1,0 +1,11 @@
+#{{ ansible_managed }}
+
+# First rule - delete all
+-D
+
+# Increase the buffers to survive stress events.
+# Make this bigger for busy systems
+-b 320
+{{ auditd_base_rules | join('\n') }}
+{{ auditd_custom_rules | join('\n') }}
+{% if auditd_enable_immutable %}-e 2{% endif %}

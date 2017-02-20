@@ -1,0 +1,6 @@
+---
+- name: Service running
+  service:
+    name: auditd
+    state: started
+    enabled: yes

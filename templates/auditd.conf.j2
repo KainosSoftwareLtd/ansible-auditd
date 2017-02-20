@@ -1,0 +1,28 @@
+#
+# This file controls the configuration of the audit daemon
+#
+
+log_file = {{ auditd_log_file }}
+log_format = {{ auditd_log_format | upper }}
+log_group = {{ auditd_log_group }}
+priority_boost = {{ auditd_priority_boost }}
+flush = {{ auditd_flush | upper }}
+freq = {{ auditd_frequency }}
+num_logs = {{ auditd_num_logs }}
+disp_qos = {{ auditd_disp_qos }}
+dispatcher = {{ auditd_dispatcher }}
+name_format = {{ auditd_name_format | upper }}
+max_log_file = {{ auditd_max_log_file }}
+max_log_file_action = {{ auditd_max_log_file_action | upper }}
+space_left = {{ auditd_space_left }}
+space_left_action = {{ auditd_space_left_action | upper }}
+action_mail_acct = {{ auditd_action_mail_acct }}
+admin_space_left = {{ auditd_admin_space_left }}
+admin_space_left_action = {{ auditd_admin_space_left_action | upper }}
+disk_full_action = {{ auditd_disk_full_action | upper }}
+disk_error_action = {{ auditd_disk_error_action | upper }}
+tcp_listen_queue = {{ auditd_tcp_listen_queue }}
+tcp_max_per_addr = {{ auditd_tcp_max_per_addr }}
+tcp_client_max_idle = {{ auditd_tcp_client_max_idle }}
+enable_krb5 = {{ auditd_enable_krb5 }}
+krb5_principal = {{ auditd_krb5_principal }}

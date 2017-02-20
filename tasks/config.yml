@@ -1,0 +1,28 @@
+---
+- name: Setup folders
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: '0750'
+    owner: root
+    group: root
+  with_items:
+    - '{{ auditd_home }}'
+    - '{{ auditd_home }}/rules.d'
+
+- name: Configuration
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    owner: root
+    group: root
+    mode: '0640'
+  with_items:
+    - { src: 'auditd.conf.j2',        dest: '{{ auditd_home }}/auditd.conf' }
+    - { src: 'audit.rules.j2',        dest: '{{ auditd_home }}/rules.d/audit.rules' }
+    - { src: 'audisp/syslog.conf.j2', dest: '{{ auditd_disp_home }}/plugins.d/syslog.conf' }
+  notify:
+    - restart auditd
+
+- name: flush handlers to restart auditd immediately
+  meta: flush_handlers
