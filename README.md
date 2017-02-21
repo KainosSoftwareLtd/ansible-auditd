@@ -38,6 +38,8 @@ You can also set your own custom rules there:
 auditd_custom_rules: []
 ```
 
+_auditd_enable_immutable_ variable makes the service immutable, so setting it to _True_ will prevent it from restarting/reloading.
+
 License
 -------
 
@@ -46,4 +48,4 @@ MIT
 Author Information
 ------------------
 
-This role was created in 2017 by Caoimhin Graham on behalf of [Kainos Software](https://www.kainos.com).
+This role was created in 2017 by Caoimhin Graham and Radosław Dobrzeniecki on behalf of [Kainos Software](https://www.kainos.com).
