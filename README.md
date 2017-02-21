@@ -1,7 +1,7 @@
 Auditd
 =========
 
-A role that installs and configures auditd. 
+A role that installs and configures auditd.
 
 The role is configurable so you can setup your own custom rules but is configured by default with the basics.
 
@@ -14,7 +14,16 @@ Requirements
 Configuration
 ------------
 
-All configuration parameters and base rules are stored in defaults:
+All configuration parameters and base rules are stored in defaults and are configured with sensible out-of-the-box values that broadly correalate with CIS guidence:
+
+When applying rules in your environment its intended you have a two pronged approach:
+
+1. You have some rules you always want to deploy to every server
+2. You may have some custom rules to add based on the environment/role
+
+So in addition to the standard configuration parameters you also get `auditd_base_rules` and `auditd_custom_rules` which are both arrays.
+
+So you would setup your default auditd config as below:
 
 ```
 auditd_home: /etc/audit
@@ -32,13 +41,13 @@ auditd_base_rules:
 ...
 ```
 
-You can also set your own custom rules there:
+And perhaps add any custom rules you require as part of role dependencies; blank is also fine.
 
 ```
 auditd_custom_rules: []
 ```
 
-_auditd_enable_immutable_ variable makes the service immutable, so setting it to _True_ will prevent it from restarting/reloading.
+Beware of the `auditd_enable_immutable` variable, it makes the configration immutable between restarts. So if you set this variable to _True_ it will prevent ansible from restarting/reloading the auditd service; for this reason it is set to false by default.
 
 License
 -------
