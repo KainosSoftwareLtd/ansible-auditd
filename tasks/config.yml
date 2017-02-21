@@ -1,5 +1,5 @@
 ---
-- name: Setup folders
+- name: Auditd | Setup folders
   file:
     path: '{{ item }}'
     state: directory
@@ -10,7 +10,7 @@
     - '{{ auditd_home }}'
     - '{{ auditd_home }}/rules.d'
 
-- name: Configuration
+- name: Auditd | Config files
   template:
     src: '{{ item.src }}'
     dest: '{{ item.dest }}'
@@ -22,7 +22,7 @@
     - { src: 'audit.rules.j2',        dest: '{{ auditd_home }}/rules.d/audit.rules' }
     - { src: 'audisp/syslog.conf.j2', dest: '{{ auditd_disp_home }}/plugins.d/syslog.conf' }
   notify:
-    - restart auditd
+    - Auditd | Restart service
 
 - name: flush handlers to restart auditd immediately
   meta: flush_handlers

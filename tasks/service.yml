@@ -1,5 +1,5 @@
 ---
-- name: Service running
+- name: Auditd | Service enabled
   service:
     name: auditd
     state: started
