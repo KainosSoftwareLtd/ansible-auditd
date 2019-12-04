@@ -1,5 +1,5 @@
 ---
-- name: Auditd | Setup folders
+- name: Auditd setup folders
   file:
     path: '{{ item }}'
     state: directory
@@ -10,7 +10,7 @@
     - '{{ auditd_home }}'
     - '{{ auditd_home }}/rules.d'
 
-- name: Auditd | Config files
+- name: Auditd config files
   template:
     src: '{{ item.src }}'
     dest: '{{ item.dest }}'
@@ -21,6 +21,62 @@
     - { src: 'auditd.conf.j2',        dest: '{{ auditd_home }}/auditd.conf' }
     - { src: 'audit.rules.j2',        dest: '{{ auditd_home }}/rules.d/audit.rules' }
     - { src: 'audisp/syslog.conf.j2', dest: '{{ auditd_disp_home }}/plugins.d/syslog.conf' }
+  notify:
+    - Auditd | Restart service
+
+
+- name: Search for privileged commands
+  shell: "find / -xdev -type f -perm -4000 -o -type f -perm -2000 2>/dev/null | cat"
+  check_mode: no
+  register: find_result
+  when:  # Bare-metal/VM task, not applicable for containers
+    - (ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker")
+
+# Inserts/replaces the rule in /etc/audit/rules.d
+
+- name: Search /etc/audit/rules.d for audit rule entries
+  find:
+    paths: "/etc/audit/rules.d"
+    recurse: no
+    contains: "^.*path={{ item }} .*$"
+    patterns: "*.rules"
+  with_items:
+    - "{{ find_result.stdout_lines }}"
+  register: files_result
+  when:  # Bare-metal/VM task, not applicable for containers
+    - (ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker")
+
+- name: Overwrites the rule in rules.d
+  lineinfile:
+    path: "{{ item.1.path }}"
+    line: '-a always,exit -F path={{ item.0.item }} -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged'
+    create: no
+    regexp: "^.*path={{ item.0.item }} .*$"
+  with_subelements:
+    - "{{ files_result.results }}"
+    - files
+  when:  # Bare-metal/VM task, not applicable for containers
+    - (ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker")
+
+- name: Adds the rule in rules.d
+  lineinfile:
+    path: /etc/audit/rules.d/privileged.rules
+    line: '-a always,exit -F path={{ item.item }} -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged'
+    create: yes
+  with_items:
+    - "{{ files_result.results }}"
+  when: item.matched == 0 and (ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker")
+
+- name: Inserts/replaces the rule in audit.rules
+  lineinfile:
+    path: /etc/audit/audit.rules
+    line: '-a always,exit -F path={{ item.item }} -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged'
+    create: yes
+    regexp: "^.*path={{ item.item }} .*$"
+  with_items:
+    - "{{ files_result.results }}"
+  when:  # Bare-metal/VM task, not applicable for containers
+    - (ansible_virtualization_role != "guest" or ansible_virtualization_type != "docker")
   notify:
     - Auditd | Restart service
 
